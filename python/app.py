@@ -5,6 +5,147 @@ import json
 import streamlit as st
 from cloudflare import Cloudflare
 
+# Configure the page to be presentable
+st.set_page_config(
+    page_title="AI-Powered Resume Feedback Assistant",
+    page_icon="🤖",
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
+
+# Sidebar for theme selection
+with st.sidebar:
+    theme = st.selectbox("Theme:", ["Light", "Dark", "System Default"])
+
+# Apply theme based on selection
+if theme == "Dark":
+    st.markdown("""
+        <style>
+        /* General body styles */
+        body {
+            background-color: #0e1117 !important;
+            color: #f0f0f0 !important;
+        }
+        
+        /* Adjust Streamlit container background */
+        .stApp {
+            background-color: #0e1117 !important;
+            color: #f0f0f0 !important;
+        }
+
+        /* Style sidebar */
+        section[data-testid="stSidebar"] {
+            background-color: #1a1d23 !important;
+            color: #f0f0f0 !important;
+            border-right: 1px solid #333333 !important;
+        }
+
+        /* Style all widget containers (file uploader, radio, etc.) */
+        .stRadio, .stFileUploader {
+            background-color: #1a1d23 !important;
+            border: 1px solid #333333 !important;
+            border-radius: 5px !important;
+            padding: 10px !important;
+            color: #f0f0f0 !important;
+        }
+
+        /* Style radio labels */
+        label {
+            color: #f0f0f0 !important;
+            font-size: 14px !important;
+        }
+
+        /* Adjust the selected radio button's text and background */
+        input[type="radio"]:checked + div {
+            background-color: #333333 !important;
+            color: white !important;
+            border: 2px solid #555555 !important;
+        }
+
+        /* Style file uploader text */
+        div[data-testid="stFileUploader"] label {
+            color: #f0f0f0 !important;
+        }
+
+        /* Style buttons */
+        .stButton>button {
+            background-color: #333333 !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 5px !important;
+            padding: 10px 20px !important;
+            font-size: 16px !important;
+            cursor: pointer !important;
+        }
+        .stButton>button:hover {
+            background-color: #555555 !important;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+elif theme == "Light":
+    st.markdown("""
+        <style>
+        /* General body styles */
+        body {
+            background-color: white !important;
+            color: black !important;
+        }
+        
+        /* Adjust Streamlit container background */
+        .stApp {
+            background-color: white !important;
+            color: black !important;
+        }
+
+        /* Style sidebar */
+        section[data-testid="stSidebar"] {
+            background-color: #f9f9f9 !important;
+            color: black !important;
+            border-right: 1px solid #cccccc !important;
+        }
+
+        /* Style all widget containers (file uploader, radio, etc.) */
+        .stRadio, .stFileUploader {
+            background-color: #ffffff !important;
+            border: 1px solid #cccccc !important;
+            border-radius: 5px !important;
+            padding: 10px !important;
+            color: black !important;
+        }
+
+        /* Style radio labels */
+        label {
+            color: black !important;
+            font-size: 14px !important;
+        }
+
+        /* Adjust the selected radio button's text and background */
+        input[type="radio"]:checked + div {
+            background-color: #e0e0e0 !important;
+            color: black !important;
+            border: 2px solid #cccccc !important;
+        }
+
+        /* Style file uploader text */
+        div[data-testid="stFileUploader"] label {
+            color: black !important;
+        }
+
+        /* Style buttons */
+        .stButton>button {
+            background-color: #4CAF50 !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 5px !important;
+            padding: 10px 20px !important;
+            font-size: 16px !important;
+            cursor: pointer !important;
+        }
+        .stButton>button:hover {
+            background-color: #45a049 !important;
+        }
+        </style>
+    """, unsafe_allow_html=True)
 
 st.title("AI-Powered Resume Feedback Assistant")
 
@@ -32,6 +173,19 @@ role_context = None
 if feedback_type == "Specific Feedback for a Role":
     role_context = st.text_input("Enter the role or industry you're targeting:")
 
+# Build initial message to the system based on user selection
+if feedback_type == "General Improvement":
+    system_instruction = (
+        "You are a helpful assistant specializing in providing general feedback for resumes."
+        "Analyze the provided resume and suggest improvements in formatting, clarity, and context."
+    )
+elif feedback_type == "Specific Feedback for a Role":
+    system_instruction = (
+        f"You are a career advisor specializing in providing tailored feedback for resumes."
+        f"The user is targetting a role or industry: '{role_context}'."
+        "Analyze the provided resume and suggest improvements specifically to make it more suitable for the target role or industry."
+    )
+
 # Accept user input (resume file)
 uploaded_file = st.file_uploader("Upload your resume (PDF or TXT)", type=["pdf", "txt"])
 
@@ -53,7 +207,8 @@ if uploaded_file:
     if role_context:
         context_message += f"\nTarget Role/Industry: {role_context}"
 
-    # Add user message to chat history
+    # Add system instruction as first message, then the resume content
+    st.session_state.messages = [{"role": "system", "content": system_instruction}]
     st.session_state.messages.append({"role": "user", "content": f"Resume:\n{resume_text}"})
 
     # # Display user input in chat message container
