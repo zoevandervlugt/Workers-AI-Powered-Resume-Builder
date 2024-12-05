@@ -1,5 +1,18 @@
 # Python Workers AI Starter Kit
 
+## Viewing
+
+To view the Resume-Builder in your brower, copy and paste these commands into your terminal.
+```
+cd python
+cp .streamlit/secrets.toml.example .streamlit/secrets.toml
+python -m venv venv
+source ./venv/bin/activate
+python -m pip install -r requirements.txt
+python -m streamlit run app.py
+```
+
+
 ## Installation
 
 Copy your secrets file and add your credentials.
