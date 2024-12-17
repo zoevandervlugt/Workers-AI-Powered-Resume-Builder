@@ -1,8 +1,11 @@
 # Python Workers AI Starter Kit
 
 ## Viewing
+Copy your secrets file and add your credentials.
 
-To view the Resume-Builder in your brower, copy and paste these commands into your terminal.
+Get your credentials at dash.cloudflare.com, AI > Use REST API, Create a Workers AI API Token
+
+To view the Resume-Builder in your brower, copy and paste these commands into your terminal after .
 ```
 cd python
 cp .streamlit/secrets.toml.example .streamlit/secrets.toml
@@ -12,28 +15,6 @@ python -m pip install -r requirements.txt
 python -m streamlit run app.py
 ```
 
-
-## Installation
-
-Copy your secrets file and add your credentials.
-
-Get your credentials at dash.cloudflare.com, AI > Use REST API, Create a Workers AI API Token
-
-```bash
-cp .streamlit/secrets.toml.example .streamlit/secrets.toml
-```
-
-```bash
-python -m venv venv
-source ./venv/bin/activate
-python -m pip install -r requirements.txt
-```
-
-## Develop
-
-```bash
-python -m streamlit run app.py
-```
 
 ## More resources
 
