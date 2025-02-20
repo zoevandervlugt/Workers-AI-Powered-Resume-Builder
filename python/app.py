@@ -198,6 +198,7 @@ if uploaded_file:
             resume_text += page.extract_text()
     elif uploaded_file.type == "text/plain":
         resume_text = uploaded_file.read().decode("utf-8")
+    else print("Incorrect File Type")
 
     # # Display uploaded content (for debugging)
     # st.text_area("Uploaded Resume Content", value=resume_text, height=250)
